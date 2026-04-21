@@ -1,0 +1,15 @@
+# Flutter
+frontend/build/
+frontend/.dart_tool/
+frontend/.idea/
+frontend/.packages
+frontend/pubspec.lock
+
+# Python
+backend/__pycache__/
+backend/venv/
+backend/*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
