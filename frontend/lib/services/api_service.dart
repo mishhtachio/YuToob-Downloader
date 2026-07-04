@@ -14,22 +14,23 @@ class ApiService {
 
   static String? _activeBaseUrl;
 
-  static bool isYoutubeUrl(String input) {
+  static String normalizeUrl(String input) {
     final trimmed = input.trim();
-    if (trimmed.isEmpty) {
-      return false;
+    if (trimmed.isEmpty) return trimmed;
+    if (trimmed.startsWith(RegExp(r'https?://', caseSensitive: false))) {
+      return trimmed;
     }
+    return "https://$trimmed";
+  }
 
-    final uri = Uri.tryParse(trimmed);
+  static bool isYoutubeUrl(String input) {
+    final normalized = normalizeUrl(input);
+    final uri = Uri.tryParse(normalized);
     if (uri == null) {
       return false;
     }
 
     final host = uri.host.toLowerCase();
-    if (host.isEmpty) {
-      return false;
-    }
-
     return host == "youtu.be" ||
         host == "youtube.com" ||
         host == "www.youtube.com" ||
@@ -44,7 +45,8 @@ class ApiService {
       return false;
     }
 
-    final uri = Uri.tryParse(trimmed);
+    final normalized = normalizeUrl(input);
+    final uri = Uri.tryParse(normalized);
     if (uri == null) {
       return false;
     }
@@ -185,7 +187,7 @@ class ApiService {
     final response = await _request(
       (baseUrl) => http.get(
         Uri.parse("$baseUrl/info").replace(
-          queryParameters: {"url": url},
+          queryParameters: {"url": normalizeUrl(url)},
         ),
       ),
     );
@@ -226,7 +228,7 @@ class ApiService {
         Uri.parse("$baseUrl/download"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "url": url,
+          "url": normalizeUrl(url),
           "format_type": format,
           "quality": quality,
           "concurrent_threads": concurrentThreads,
@@ -385,7 +387,8 @@ class ApiService {
     final trimmed = input.trim();
     if (trimmed.isEmpty) return false;
     if (!isYoutubeUrl(trimmed)) return false;
-    final uri = Uri.tryParse(trimmed);
+    final normalized = normalizeUrl(trimmed);
+    final uri = Uri.tryParse(normalized);
     if (uri == null) return false;
     return uri.queryParameters.containsKey("list");
   }
@@ -394,7 +397,7 @@ class ApiService {
     final response = await _request(
       (baseUrl) => http.get(
         Uri.parse("$baseUrl/playlist").replace(
-          queryParameters: {"url": url},
+          queryParameters: {"url": normalizeUrl(url)},
         ),
       ),
     );
@@ -417,7 +420,7 @@ class ApiService {
         Uri.parse("$baseUrl/download-playlist"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "url": url,
+          "url": normalizeUrl(url),
           "format_type": format,
           "quality": quality,
           "concurrent_threads": concurrentThreads,

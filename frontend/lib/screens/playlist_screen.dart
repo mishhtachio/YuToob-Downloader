@@ -178,6 +178,8 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
       }
     }
 
+    if (!context.mounted) return;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,

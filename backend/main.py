@@ -503,18 +503,22 @@ def download_playlist(request: PlaylistDownloadRequest):
 
     # Limit to prevent overloading the server
     max_tracks = 50
-    entries = entries[:max_tracks]
 
     with jobs_lock:
         active_jobs = sum(
             1 for j in jobs.values()
             if j.get("status") in {"starting", "downloading", "processing"}
         )
-        if active_jobs + len(entries) >= 20:
+        # Allow up to 30 concurrent active jobs total in the system
+        allowed_slots = max(0, 30 - active_jobs)
+        if allowed_slots == 0:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="Too many active downloads. Please wait for current downloads to finish.",
             )
+
+        # Dynamically slice entries to fit within the allowed active job slots
+        entries = entries[:min(max_tracks, allowed_slots)]
 
     for v in entries:
         if not v:
@@ -577,7 +581,7 @@ def fetch_google_suggestions(q: str):
         url, 
         headers={'User-Agent': 'Mozilla/5.0'}
     )
-    with urllib.request.urlopen(req) as response:
+    with urllib.request.urlopen(req, timeout=5) as response:
         data = json.loads(response.read().decode('utf-8'))
         return data[1] if len(data) > 1 else []
 

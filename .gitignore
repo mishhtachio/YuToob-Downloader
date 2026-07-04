@@ -14,3 +14,7 @@ backend/downloads/
 # OS
 .DS_Store
 Thumbs.db
+
+# Sensitive credentials
+cookies.txt
+backend/cookies.txt
