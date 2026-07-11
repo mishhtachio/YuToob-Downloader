@@ -2,7 +2,7 @@
 
 # YuToob Downloader
 
-*A modern, full-stack application to search, preview, and download high-quality YouTube audio (MP3) directly to your Android device or local storage.*
+*A modern, full-stack application to search, preview, and download high-quality YouTube audio (MP3) directly to your Android device or local storage. Built upon yt-dlp*
 
 [![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=flat&logo=Flutter&logoColor=white)](https://flutter.dev)
 [![FastAPI](https://img.shields.io/badge/FastAPI-%23009688.svg?style=flat&logo=FastAPI&logoColor=white)](https://fastapi.tiangolo.com)
